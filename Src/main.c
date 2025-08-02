@@ -344,8 +344,10 @@ void TIM16_IRQHandler(void)
 	HAL_TIM_IRQHandler(&htim16);
 	
 	// TODO: Change LED pattern
+	// this is the code we execute when button 1 is pressed
 	if (HAL_GPIO_ReadPin(Button1_GPIO_Port, Button1_Pin) == GPIO_PIN_RESET) {
 
+		//reseting all the LEDs so they start at a off state
 		        HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, GPIO_PIN_RESET);
 		        HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
 		        HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
@@ -355,6 +357,8 @@ void TIM16_IRQHandler(void)
 		        HAL_GPIO_WritePin(LED6_GPIO_Port, LED6_Pin, GPIO_PIN_RESET);
 		        HAL_GPIO_WritePin(LED7_GPIO_Port, LED7_Pin, GPIO_PIN_RESET);
 
+			/*if the currentLED_ON_in_sequence is less than 8 switch on the corresponding LED
+			else switch on the LEDs in reverse order*/
 		        switch(patternMode1[(currentLED_ON_in_sequence_1 < patternSize) ? currentLED_ON_in_sequence_1 : (14 - currentLED_ON_in_sequence_1)]){
 
 		        	case 0: HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, GPIO_PIN_SET); break;
@@ -366,12 +370,13 @@ void TIM16_IRQHandler(void)
 		        	case 6: HAL_GPIO_WritePin(LED6_GPIO_Port, LED6_Pin, GPIO_PIN_SET); break;
 		        	case 7: HAL_GPIO_WritePin(LED7_GPIO_Port, LED7_Pin, GPIO_PIN_SET); break;
 		        }
-
+			//this line increments currentLED_ON_in_sequence1 and makes sure it doesn't go above 14
 		        currentLED_ON_in_sequence_1 = (currentLED_ON_in_sequence_1 + 1) % 15;
 
      }
+     //code that has to be executed when button2 is pressed
      else if (HAL_GPIO_ReadPin(Button2_GPIO_Port, Button2_Pin) == GPIO_PIN_RESET) {
-
+			//starting with switching on all the buttons
     		        HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, GPIO_PIN_SET);
     		        HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
     		        HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
@@ -381,6 +386,8 @@ void TIM16_IRQHandler(void)
     		        HAL_GPIO_WritePin(LED6_GPIO_Port, LED6_Pin, GPIO_PIN_SET);
     		        HAL_GPIO_WritePin(LED7_GPIO_Port, LED7_Pin, GPIO_PIN_SET);
 
+			/*if the currentLED_ON_in_sequence is less than 8 switch off the corresponding LED
+			else switch off the LEDs in reverse order*/
     		        switch(patternMode2[(currentLED_OFF_in_sequence_2 < patternSize) ? currentLED_OFF_in_sequence_2 : (14 - currentLED_OFF_in_sequence_2)]){
 
     		        	case 0: HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, GPIO_PIN_RESET); break;
@@ -392,16 +399,19 @@ void TIM16_IRQHandler(void)
     		        	case 6: HAL_GPIO_WritePin(LED6_GPIO_Port, LED6_Pin, GPIO_PIN_RESET); break;
     		        	case 7: HAL_GPIO_WritePin(LED7_GPIO_Port, LED7_Pin, GPIO_PIN_RESET); break;
     		        }
-
+			//this line increments currentLED_ON_in_sequence2 and makes sure it doesn't go above 14
     		        currentLED_OFF_in_sequence_2 = (currentLED_OFF_in_sequence_2 + 1) % 15;
 
         }
+	     	// this is the code that is to be executed when button3 is pressed.
 		  else if (HAL_GPIO_ReadPin(Button3_GPIO_Port, Button3_Pin) == GPIO_PIN_RESET) {
+			//checking if the is an LED sequence that has been generated and still active
 		      if (!is_LED_Sequence_Active) {
-		    	  srand(HAL_GetTick());
-		    	  current_LEDS_ON_in_sequence_3 = (rand() % 255) + 1;
-		    	  delay = 100 + (rand()%(1500 -100+ 1));
+		    	  srand(HAL_GetTick());//the seed for the random generator
+		    	  current_LEDS_ON_in_sequence_3 = (rand() % 255) + 1;//make sure the sequence is not above 8 bit value
+		    	  delay = 100 + (rand()%(1500 -100+ 1));//generate a rando delay
 
+			//storing the generated sequence in the array for pattern 3
 		    	  patternMode3[7] = current_LEDS_ON_in_sequence_3 & 1; current_LEDS_ON_in_sequence_3 >>= 1;
 		    	  patternMode3[6] = current_LEDS_ON_in_sequence_3 & 1; current_LEDS_ON_in_sequence_3 >>= 1;
 		    	  patternMode3[5] = current_LEDS_ON_in_sequence_3 & 1; current_LEDS_ON_in_sequence_3 >>= 1;
@@ -411,6 +421,7 @@ void TIM16_IRQHandler(void)
 		    	  patternMode3[1] = current_LEDS_ON_in_sequence_3 & 1; current_LEDS_ON_in_sequence_3 >>= 1;
 		    	  patternMode3[0] = current_LEDS_ON_in_sequence_3 & 1; current_LEDS_ON_in_sequence_3 >>= 1;
 
+			//switching on all the LEDs corresponding to the proper bit
 		    	  if (patternMode3[0] == 1) HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, GPIO_PIN_SET);
 		    	  if (patternMode3[1] == 1) HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
 		    	  if (patternMode3[2] == 1) HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
@@ -420,17 +431,19 @@ void TIM16_IRQHandler(void)
 		    	  if (patternMode3[6] == 1) HAL_GPIO_WritePin(LED6_GPIO_Port, LED6_Pin, GPIO_PIN_SET);
 		    	  if (patternMode3[7] == 1) HAL_GPIO_WritePin(LED7_GPIO_Port, LED7_Pin, GPIO_PIN_SET);
 
+			//leting the thread know that the sequence is still active
 		          is_LED_Sequence_Active = true;
-		          current_LED_turned_OFF = 0;
-		          startTime = HAL_GetTick();
+		          current_LED_turned_OFF = 0;//no LED has been switched off
+		          startTime = HAL_GetTick();//start time when button is pressed
 		      }
 
+			//if LEDs are still on get the end time and see if the elapsed time has exceeded the random delay
 		      else if (is_LED_Sequence_Active) {
 		    	  endTime = HAL_GetTick();
 		    	  elapsedTime = endTime - startTime;
 		          if ((elapsedTime) >= delay) {
 		        	  startTime = HAL_GetTick();
-
+				//then switch off the first LED and so on...
 		              switch(current_LED_turned_OFF) {
 		                  case 0: HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, GPIO_PIN_RESET); break;
 		                  case 1: HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET); break;
@@ -441,14 +454,15 @@ void TIM16_IRQHandler(void)
 		                  case 6: HAL_GPIO_WritePin(LED6_GPIO_Port, LED6_Pin, GPIO_PIN_RESET); break;
 		                  case 7: HAL_GPIO_WritePin(LED7_GPIO_Port, LED7_Pin, GPIO_PIN_RESET); break;
 		              }
-
+				//telling program how many of the corresponding LEDs have been switched off
 		              current_LED_turned_OFF++;
 		              if (current_LED_turned_OFF >= patternSize) {
-		            	  is_LED_Sequence_Active = false;
+		            	  is_LED_Sequence_Active = false;//All LEDs have been switched off
 		              }
 		          }
 		      }
        }
+	//if no button is pressed switch off all the active LEDs if any.
 	   else if ((HAL_GPIO_ReadPin(Button1_GPIO_Port, Button1_Pin) == GPIO_PIN_SET)
 			 && (HAL_GPIO_ReadPin(Button2_GPIO_Port, Button2_Pin) == GPIO_PIN_SET)
 			 && (HAL_GPIO_ReadPin(Button3_GPIO_Port, Button3_Pin) == GPIO_PIN_SET)
@@ -507,3 +521,4 @@ void assert_failed(uint8_t *file, uint32_t line)
 
 #endif /* USE_FULL_ASSERT *>>>>>>> main
  
+
