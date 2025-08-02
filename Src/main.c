@@ -48,8 +48,8 @@ TIM_HandleTypeDef htim16;
 
 /* USER CODE BEGIN PV */
 // TODO: Define input variables
-//this is the array that stores the first sequence
-uint8_t patternMode1[] = {0b00000000,0b00000001,0b00000010,0b00000011, 0b00000100,0b00000101,0b00000110,0b00000111};
+
+uint8_t patternMode1[] = {0b00000000,0b00000001,0b00000010,0b00000011, 0b00000100,0b00000101,0b00000110,0b00000111};//this array stores the first sequence
 uint8_t patternSize = sizeof(patternMode1) / sizeof(patternMode1[0]);
 uint8_t *patternMode2 = patternMode1;
 uint8_t patternMode3[0b00001000];
@@ -379,5 +379,6 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+
 
 
