@@ -50,15 +50,16 @@ TIM_HandleTypeDef htim16;
 // TODO: Define input variables
 
 uint8_t patternMode1[] = {0b00000000,0b00000001,0b00000010,0b00000011, 0b00000100,0b00000101,0b00000110,0b00000111};//this array stores the first sequence
-uint8_t patternSize = sizeof(patternMode1) / sizeof(patternMode1[0]);
+uint8_t patternSize = sizeof(patternMode1) / sizeof(patternMode1[0]); //Variable to get the size of the array
 uint8_t *patternMode2 = patternMode1;
 uint8_t patternMode3[0b00001000];
 
+//These variables show the LEDs that are on when a certain button is pressed
 uint8_t currentLED_ON_in_sequence_1 = 0;
 uint8_t currentLED_OFF_in_sequence_2 = 0;
 uint8_t current_LEDS_ON_in_sequence_3 = 0;
 
-bool is_LED_Sequence_Active = false;
+bool is_LED_Sequence_Active = false; //variable to show if LED sequence is in use
 uint8_t current_LED_turned_OFF = 0;
 uint32_t elapsedTime = 0;
 uint32_t startTime = 0;
@@ -379,6 +380,7 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+
 
 
 
