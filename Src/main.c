@@ -124,11 +124,12 @@ int main(void)
     /* USER CODE BEGIN 3 */
 
     // TODO: Check pushbuttons to change timer delay
+	//code to change the auto reload value that was set for the timer
     if (HAL_GPIO_ReadPin(Button0_GPIO_Port, Button0_Pin) == GPIO_PIN_RESET) {
-	    __HAL_TIM_SET_AUTORELOAD(&htim16, 500-1);
+	    __HAL_TIM_SET_AUTORELOAD(&htim16, 500-1);//Autoreload value decrease when button pressed
     }
     if (HAL_GPIO_ReadPin(Button0_GPIO_Port, Button0_Pin) == GPIO_PIN_SET) {
-	    __HAL_TIM_SET_AUTORELOAD(&htim16, 1000-1);
+	    __HAL_TIM_SET_AUTORELOAD(&htim16, 1000-1);//Autoreload value decrease when button not pressed
     }
   }
   /* USER CODE END 3 */
@@ -380,5 +381,6 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+
 
 
